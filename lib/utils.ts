@@ -1,6 +1,7 @@
 import { TextSegment } from "@/types";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { DEFAULT_VOICE, voiceOptions } from "./constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -20,6 +21,11 @@ export function generateSlug(text: string): string {
     .replace(/[\s_]+/g, '-') // Replace spaces and underscores with hyphens
     .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 }
+
+// Escape regex special characters to prevent ReDoS attacks
+export const escapeRegex = (str: string): string => {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
 
 // Splits text content into segments for MongoDB storage and search
 export const splitIntoSegments = (
@@ -59,6 +65,22 @@ export const splitIntoSegments = (
   }
 
   return segments;
+};
+
+// Get voice data by persona key or voice ID
+export const getVoice = (persona?: string) => {
+  if (!persona) return voiceOptions[DEFAULT_VOICE];
+
+  // Find by voice ID
+  const voiceEntry = Object.values(voiceOptions).find((v) => v.id === persona);
+  if (voiceEntry) return voiceEntry;
+
+  // Find by key
+  const voiceByKey = voiceOptions[persona as keyof typeof voiceOptions];
+  if (voiceByKey) return voiceByKey;
+
+  // Default fallback
+  return voiceOptions[DEFAULT_VOICE];
 };
 
 export async function parsePDFFile(file: File) {
