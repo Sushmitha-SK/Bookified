@@ -1,9 +1,10 @@
-import { auth } from '@clerk/nextjs/server'
-import { ArrowLeft, Mic } from 'lucide-react'
-import Link from 'next/link'
-import { redirect } from 'next/navigation';
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft, MicOff, Mic } from "lucide-react";
+
 import { getBookBySlug } from "@/lib/actions/book.actions";
-import VapiControls from '@/components/VapiControls';
+import VapiControls from "@/components/VapiControls";
 
 export default async function BookDetailsPage({
     params,
@@ -13,14 +14,14 @@ export default async function BookDetailsPage({
     const { userId } = await auth();
 
     if (!userId) {
-        redirect('/sign-in')
+        redirect("/sign-in");
     }
 
     const { slug } = await params;
     const result = await getBookBySlug(slug);
 
     if (!result.success || !result.data) {
-        redirect("/")
+        redirect("/");
     }
 
     const book = result.data;
@@ -33,6 +34,5 @@ export default async function BookDetailsPage({
 
             <VapiControls book={book} />
         </div>
-    )
+    );
 }
-
