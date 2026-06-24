@@ -4,15 +4,27 @@ import { connectToDatabase } from "@/database/mongoose";
 import { CreateBook, TextSegment } from "@/types";
 import { escapeRegex, generateSlug, serializeData } from "../utils";
 import Book from "@/database/models/book.model";
-import { revalidatePath } from "next/cache";
 import BookSegment from "@/database/models/book-segment.model";
 import mongoose from "mongoose";
 
-export const getAllBooks = async () => {
+export const getAllBooks = async (search?: string) => {
     try {
         await connectToDatabase();
 
-        const books = await Book.find().sort({ createdAt: -1 }).lean();
+        let query = {};
+
+        if (search) {
+            const escapedSearch = escapeRegex(search);
+            const regex = new RegExp(escapedSearch, 'i');
+            query = {
+                $or: [
+                    { title: { $regex: regex } },
+                    { author: { $regex: regex } },
+                ]
+            };
+        }
+
+        const books = await Book.find(query).sort({ createdAt: -1 }).lean();
 
         return {
             success: true,

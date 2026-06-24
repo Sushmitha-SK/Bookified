@@ -291,12 +291,6 @@ export function useVapi(book: IBook) {
         status === 'thinking' ||
         status === 'speaking';
 
-    // Calculate remaining time
-    // const maxDurationSeconds = limits.maxSessionMinutes * SECONDS_PER_MINUTE;
-    // const remainingSeconds = Math.max(0, maxDurationSeconds - duration);
-    // const showTimeWarning =
-    //     isActive && remainingSeconds <= TIME_WARNING_THRESHOLD && remainingSeconds > 0;
-
     return {
         status,
         isActive,
@@ -310,9 +304,6 @@ export function useVapi(book: IBook) {
         isBillingError,
         maxDurationSeconds,
         clearError,
-        // maxDurationSeconds,
-        // remainingSeconds,
-        // showTimeWarning,
     };
 }
 
